@@ -1,0 +1,163 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "../ERD.svg"
+}
+
+model User {
+  id             String    @id @default(uuid())
+  name           String
+  email          String?   @unique
+  password       String?
+  role           Role?     @default(USER)
+  email_verified DateTime? @map("email_verified")
+  image          String?
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+
+  store_org          StoreOrg?            @relation(fields: [store_orgId], references: [id])
+  store_orgId        String?
+  ProductTransaction ProductTransaction[]
+
+  @@map("users")
+}
+
+model StoreOrg {
+  id              String  @id @default(uuid())
+  name            String
+  logo            String?
+  primary_color   String?
+  secondary_color String?
+  address         String?
+
+  User               User[]
+  Supplier           Supplier[]
+  Product            Product[]
+  ProductTransaction ProductTransaction[]
+  FinancialHistory   FinancialHistory[]
+
+  @@map("store_org")
+}
+
+model Product {
+  id             String  @id @default(uuid())
+  name           String
+  description    String?
+  purchase_price Float
+  sale_price     Float?
+  quantity       Float
+  image          String?
+
+  ProductTransaction ProductTransaction[]
+
+  supplier    Supplier? @relation(fields: [supplier_id], references: [id])
+  supplier_id String?
+
+  store_org    StoreOrg? @relation(fields: [store_org_id], references: [id])
+  store_org_id String?
+
+  @@map("product")
+}
+
+model ProductTransaction {
+  id   String                 @id @default(uuid())
+  type ProductTransactionType
+
+  product    Product @relation(fields: [product_id], references: [id])
+  product_id String
+
+  quantity         Int
+  transaction_data DateTime
+
+  value    Float?
+  discount Float?
+
+  transaction_status ProductTransactionStatus?
+
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id String
+
+  client_name      String?
+  FinancialHistory FinancialHistory[]
+
+  store_org    StoreOrg? @relation(fields: [store_org_id], references: [id])
+  store_org_id String?
+
+  @@map("product_transaction")
+}
+
+model FinancialHistory {
+  id          String  @id @default(uuid())
+  value       Float
+  description String?
+
+  financial_date DateTime?
+
+  type           FinancialHistoryType
+  payment_method PaymentMethod?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  product_transaction   ProductTransaction? @relation(fields: [productTransaction_id], references: [id])
+  productTransaction_id String?
+
+  store_org    StoreOrg? @relation(fields: [store_org_id], references: [id])
+  store_org_id String?
+
+  @@map("financial_history")
+}
+
+model Supplier {
+  id        String    @id @default(uuid())
+  name      String
+  telephone String?
+  address   String?
+  city      String?
+  state     String?
+  cep       String?
+  Product   Product[]
+
+  store_org    StoreOrg? @relation(fields: [store_org_id], references: [id])
+  store_org_id String?
+
+  @@map("supplier")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ProductTransactionType {
+  STOCK_IN
+  STOCK_OUT
+}
+
+enum ProductTransactionStatus {
+  DONE
+  CANCELED
+  WAITING
+}
+
+enum FinancialHistoryType {
+  REVENUE
+  EXPENSE
+}
+
+enum PaymentMethod {
+  PIX
+  MONEY
+  CARD
+}
