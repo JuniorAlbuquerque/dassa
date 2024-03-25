@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { signOut } from "next-auth/react";
 import { Header } from "./_components/Header";
+import { BreadcrumbNavigation } from "./_components/Breadcrumb";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -67,6 +68,7 @@ export default function Layout({ children }: LayoutProps) {
       <div className="flex flex-col">
         <Header />
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
+          <BreadcrumbNavigation />
           {children}
         </main>
       </div>

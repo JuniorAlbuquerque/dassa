@@ -3,7 +3,7 @@ import { StatsData } from "@/server/schemas/stats";
 
 export async function getData() {
   const res = await fetch("http://localhost:3000/api/dashboard", {
-    cache: "reload",
+    next: { tags: ["inventory"] },
   });
   // The return value is *not* serialized
   // You can return Date, Map, Set, etc.
@@ -18,7 +18,7 @@ export async function getData() {
 
 export async function getProducts() {
   const res = await fetch("http://localhost:3000/api/inventory/products", {
-    cache: "reload",
+    next: { tags: ["products"] },
   });
   // The return value is *not* serialized
   // You can return Date, Map, Set, etc.

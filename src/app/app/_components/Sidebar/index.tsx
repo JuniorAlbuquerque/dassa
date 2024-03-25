@@ -1,7 +1,7 @@
 import { HomeIcon, PackageIcon, ShoppingCartIcon } from "lucide-react";
 import { NavItem } from "../NavItem";
 
-const items = [
+export const items = [
   {
     route: "/app",
     label: "Home",

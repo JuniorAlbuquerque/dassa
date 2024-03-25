@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "../db";
 import { AuthController } from "@/server/controllers/auth";
+import { revalidateTag } from "next/cache";
 
 export const authOptions: NextAuthOptions = {
   pages: {
@@ -30,24 +31,24 @@ export const authOptions: NextAuthOptions = {
           password: credentials?.password!,
         });
 
+        revalidateTag("products");
+        revalidateTag("inventory");
+
         if (!user) {
           return null;
         }
 
-        return user;
+        return {
+          ...user,
+        };
       },
     }),
   ],
   callbacks: {
     session: ({ session, token }) => {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.id,
-          randomKey: token.randomKey,
-        },
-      };
+      session.user = token as any;
+
+      return session;
     },
     jwt: ({ token, user }) => {
       if (user) {
@@ -55,6 +56,7 @@ export const authOptions: NextAuthOptions = {
         return {
           ...token,
           id: u.id,
+          store_org: u.store_org,
         };
       }
       return token;

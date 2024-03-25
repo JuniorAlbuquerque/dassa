@@ -41,6 +41,14 @@ export default async function Page() {
             </TableRow>
           </TableHeader>
           <TableBody>
+            {data?.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center">
+                  <p>Nenhum produto cadastrado.</p>
+                </TableCell>
+              </TableRow>
+            )}
+
             {data?.map((product) => (
               <TableRow key={product.id}>
                 <TableCell>

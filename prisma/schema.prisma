@@ -29,6 +29,7 @@ model User {
   store_org          StoreOrg?            @relation(fields: [store_orgId], references: [id])
   store_orgId        String?
   ProductTransaction ProductTransaction[]
+  Product            Product[]
 
   @@map("users")
 }
@@ -56,10 +57,8 @@ model Product {
   description    String?
   purchase_price Float
   sale_price     Float?
-  quantity       Float
+  quantity       Float?
   image          String?
-
-  ProductTransaction ProductTransaction[]
 
   supplier    Supplier? @relation(fields: [supplier_id], references: [id])
   supplier_id String?
@@ -67,7 +66,26 @@ model Product {
   store_org    StoreOrg? @relation(fields: [store_org_id], references: [id])
   store_org_id String?
 
+  user    User?   @relation(fields: [user_id], references: [id])
+  user_id String?
+
+  ProductTransaction ProductTransaction[]
+  ProductVariant     ProductVariant[]
+
   @@map("product")
+}
+
+model ProductVariant {
+  id String @id @default(uuid())
+
+  product    Product @relation(fields: [product_id], references: [id])
+  product_id String
+
+  color    String?
+  size     String?
+  quantity Float
+
+  @@map("product_variant")
 }
 
 model ProductTransaction {
