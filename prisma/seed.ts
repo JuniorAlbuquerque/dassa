@@ -14,7 +14,21 @@ async function main() {
       password,
     },
   });
-  console.log({ user });
+  const storeOrg = await prisma.storeOrg.upsert({
+    where: {
+      id: "1",
+    },
+    update: {},
+    create: {
+      name: "Dassa",
+      User: {
+        connect: {
+          id: user.id,
+        },
+      },
+    },
+  });
+  console.log({ user, storeOrg });
 }
 main()
   .then(() => prisma.$disconnect())

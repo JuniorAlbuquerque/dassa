@@ -62,7 +62,16 @@ export const Header = () => {
           <DropdownMenuItem>Configurações</DropdownMenuItem>
           <DropdownMenuItem>Suporte</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => signOut()}>Sair</DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() =>
+              signOut({
+                redirect: true,
+                callbackUrl: "/auth",
+              })
+            }
+          >
+            Sair
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

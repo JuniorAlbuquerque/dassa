@@ -19,7 +19,7 @@ export const items = [
   },
   {
     route: "/app/orders",
-    label: "Orders",
+    label: "Venda",
     icon: <ShoppingCartIcon className="h-4 w-4" />,
   },
 ];

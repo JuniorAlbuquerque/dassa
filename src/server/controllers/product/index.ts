@@ -10,15 +10,9 @@ export class ProductContoller implements ProductImplementation {
     variants,
     ...product
   }: CreateProductData) {
-    const quantityByVariants = variants.reduce(
-      (acc, product) => acc + product.quantity,
-      0
-    );
-
     const new_product = await prisma.product.create({
       data: {
         ...product,
-        quantity: quantityByVariants,
         user: {
           connect: {
             id: user_id!,
@@ -52,5 +46,29 @@ export class ProductContoller implements ProductImplementation {
       id: new_product?.id,
       name: new_product?.name,
     };
+  }
+
+  async getProductById(id: string) {
+    const product = await prisma.product.findFirstOrThrow({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        name: true,
+        sale_price: true,
+        purchase_price: true,
+        ProductVariant: {
+          select: {
+            color: true,
+            quantity: true,
+            size: true,
+            id: true,
+          },
+        },
+      },
+    });
+
+    return product;
   }
 }

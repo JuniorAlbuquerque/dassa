@@ -3,37 +3,38 @@ import { prisma } from "@/services/db";
 
 export class StatsContoller implements StatsImplementation {
   async getStats() {
-    const financial = await prisma.financialHistory.groupBy({
-      by: ["type"],
+    const products = await prisma.product.aggregate({
       _sum: {
-        value: true,
+        purchase_price: true,
       },
     });
 
-    const stock_in = await prisma.product.aggregate({
+    const productVariants = await prisma.productVariant.aggregate({
       _sum: {
         quantity: true,
       },
     });
 
-    const stock_out = await prisma.productTransaction.aggregate({
-      _count: {
-        quantity: true,
+    const sales = await prisma.sale.aggregate({
+      _sum: {
+        total_price: true,
       },
-      where: {
-        type: "STOCK_OUT",
-        transaction_status: "DONE",
+    });
+
+    const product_sale = await prisma.productSale.aggregate({
+      _sum: {
+        quantity: true,
       },
     });
 
     return {
       financial: {
-        revenue_value: financial[0]?._sum?.value || 0,
-        expense_value: financial[1]?._sum?.value || 0,
+        revenue_value: sales?._sum?.total_price || 0,
+        expense_value: products?._sum?.purchase_price || 0,
       },
       products: {
-        stock_in: stock_in?._sum?.quantity || 0,
-        stock_out: stock_out?._count?.quantity || 0,
+        stock_in: productVariants?._sum?.quantity || 0,
+        stock_out: product_sale?._sum?.quantity || 0,
       },
     };
   }

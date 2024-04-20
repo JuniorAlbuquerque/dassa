@@ -17,6 +17,7 @@ import {
 import { signOut } from "next-auth/react";
 import { Header } from "./_components/Header";
 import { BreadcrumbNavigation } from "./_components/Breadcrumb";
+import { cn } from "@/lib/utils";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -46,30 +47,32 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex-1 overflow-auto py-2">
             <Sidebar />
           </div>
-          <div className="mt-auto p-4">
-            {/* <Card>
-              <CardHeader className="pb-4">
-                <CardTitle>Upgrade to Pro</CardTitle>
-                <CardDescription>
-                  Unlock all features and get unlimited access to our support
-                  team
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button className="w-full" size="sm">
-                  Upgrade
-                </Button>
-              </CardContent>
-            </Card> */}
-          </div>
+          <div className="mt-auto p-4"></div>
         </div>
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col overflow-auto">
         <Header />
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
-          <BreadcrumbNavigation />
-          {children}
+        <main className="flex gap-8 h-full">
+          <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
+            <BreadcrumbNavigation />
+            {children}
+          </div>
+
+          <div
+            className={cn(
+              "min-w-72 border-l border-muted-foreground/20 h-full p-4",
+              "flex flex-col gap-4"
+            )}
+          >
+            <h1 className="text-lg font-medium">Registro de Venda</h1>
+
+            <hr />
+
+            <div>
+              <p>3 itens selecionados</p>
+            </div>
+          </div>
         </main>
       </div>
     </div>

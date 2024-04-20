@@ -32,6 +32,7 @@ export const authOptions: NextAuthOptions = {
         });
 
         revalidateTag("products");
+        revalidateTag("product-variants");
         revalidateTag("inventory");
 
         if (!user) {
